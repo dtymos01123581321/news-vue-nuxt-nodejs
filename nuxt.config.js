@@ -1,10 +1,9 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
-  // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - news-vue-nuxt-nodejs3',
-    title: 'news-vue-nuxt-nodejs3',
+    titleTemplate: '%s - news-vue-nuxt-nodejs',
+    title: 'news-vue-nuxt-nodejs',
     htmlAttrs: {
       lang: 'en'
     },
@@ -18,29 +17,18 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-
-  // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
   ],
-
-  // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/socket.js'
   ],
-
-  // Auto import components: https://go.nuxtjs.dev/config-components
+  ssr: false,
   components: true,
-
-  // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
   ],
-
-  // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
   ],
-
-  // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
@@ -58,8 +46,6 @@ export default {
       }
     }
   },
-
-  // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   }
 }

@@ -1,83 +1,104 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <v-card class="logo py-4 d-flex justify-center">
-        <NuxtLogo />
-        <VuetifyLogo />
-      </v-card>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board
-            </a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            nuxt
-            to="/inspire"
-          >
-            Continue
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+  <v-container class="main-container">
+    <v-row>
+      <v-col v-for="post in newsFeed" :key="post.id" cols="12">
+        <v-card class="news-card">
+          <v-card-title class="news-title">{{ formatDate(post.date) }}</v-card-title>
+          <v-card-text class="news-text">{{ post.text }}</v-card-text>
+          <v-card-actions>
+            <v-btn :disabled="post.liked" @click="likePost(post.id)">Like</v-btn>
+            <span>{{ post.likes }}</span>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-form @submit.prevent="addPost">
+      <v-textarea v-model="newPostText" label="New Post" class="new-post-textarea"></v-textarea>
+      <v-btn type="submit">Add</v-btn>
+    </v-form>
+  </v-container>
 </template>
 
 <script>
 export default {
-  name: 'IndexPage'
-}
+  data() {
+    return {
+      newsFeed: [],
+      newPostText: ''
+    };
+  },
+  mounted() {
+    this.$socket.on('news', (news) => {
+      console.log('Received news:', news);
+      this.newsFeed = news;
+    });
+    this.$socket.on('like', ({ postId, likes }) => {
+      console.log('Received like:', postId, likes);
+      const post = this.newsFeed.find(p => p.id === postId);
+      if (post) post.likes = likes;
+    });
+  },
+  methods: {
+    likePost(postId) {
+      console.log('Liking post:', postId);
+      this.$socket.emit('like', postId);
+      const post = this.newsFeed.find(p => p.id === postId);
+      if (post) post.liked = true;
+    },
+    addPost() {
+      console.log('Adding post:', this.newPostText);
+      const newPost = { text: this.newPostText, date: new Date(), id: Date.now(), likes: 0 };
+      this.$socket.emit('new_post', newPost);
+      this.newPostText = '';
+    },
+    formatDate(date) {
+      return new Date(date).toLocaleString();
+    }
+  }
+};
 </script>
+
+<style scoped>
+.main-container {
+  background-color: #ffffff;
+  padding-top: 20px;
+}
+
+.news-card {
+  background-color: #f5ceaa;
+  color: #333333;
+  border: 1px solid #d3d3d3;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+
+  span {
+    margin-left: 10px;
+  }
+}
+
+.news-title, .news-text {
+  color: #333333 !important;
+}
+
+.v-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-items: center;
+}
+
+.v-btn {
+  background-color: #6200ea;
+  color: #ffffff;
+}
+
+.new-post-textarea {
+  color: #ffffff !important;
+  background-color: #ccc !important;
+  padding: 20px;
+  border: 1px solid #d3d3d3;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+</style>
