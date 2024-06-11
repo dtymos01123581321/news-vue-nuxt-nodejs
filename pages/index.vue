@@ -6,7 +6,7 @@
           <v-card-title class="news-title">{{ formatDate(post.date) }}</v-card-title>
           <v-card-text class="news-text">{{ post.text }}</v-card-text>
           <v-card-actions>
-            <v-btn :disabled="post.liked" @click="likePost(post.id)">Like</v-btn>
+            <v-btn class="news-btn" :disabled="post.liked" @click="likePost(post.id)">Like</v-btn>
             <span>{{ post.likes }}</span>
           </v-card-actions>
         </v-card>
@@ -28,23 +28,26 @@ export default {
     };
   },
   mounted() {
-    this.$socket.on('news', (news) => {
-      console.log('Received news:', news);
-      this.newsFeed = news;
+    this.$socket.on('news', (data) => {
+      console.log('Received news:', data);
+      this.newsFeed = data.map(post => ({ ...post, liked: false }));
     });
+
     this.$socket.on('like', ({ postId, likes }) => {
-      console.log('Received like:', postId, likes);
       const post = this.newsFeed.find(p => p.id === postId);
-      if (post) post.likes = likes;
+      if (post) {
+        post.likes = likes;
+        post.liked = true;
+      }
     });
+
+    console.log('Requesting news...');
     this.$socket.emit('get_news');
   },
   methods: {
     likePost(postId) {
       console.log('Liking post:', postId);
       this.$socket.emit('like', postId);
-      const post = this.newsFeed.find(p => p.id === postId);
-      if (post) post.liked = true;
     },
     addPost() {
       console.log('Adding post:', this.newPostText);
@@ -71,10 +74,6 @@ export default {
   border: 1px solid #d3d3d3;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
-
-  span {
-    margin-left: 10px;
-  }
 }
 
 .news-title, .news-text {
@@ -85,6 +84,10 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.news-btn {
+  margin-right: 20px !important;
 }
 
 .v-btn {
@@ -104,5 +107,4 @@ export default {
 .theme--dark.v-btn.v-btn--disabled {
   color: white !important;
 }
-
 </style>
