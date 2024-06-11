@@ -84,7 +84,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  align-items: center;
 }
 
 .v-btn {
