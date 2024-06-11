@@ -37,6 +37,7 @@ export default {
       const post = this.newsFeed.find(p => p.id === postId);
       if (post) post.likes = likes;
     });
+    this.$socket.emit('get_news');
   },
   methods: {
     likePost(postId) {
@@ -98,6 +99,10 @@ export default {
   border: 1px solid #d3d3d3;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
+}
+
+.theme--dark.v-btn.v-btn--disabled {
+  color: white !important;
 }
 
 </style>

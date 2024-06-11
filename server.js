@@ -41,6 +41,10 @@ io.on('connection', (socket) => {
   const sortedNewsFeed = newsFeed.sort((a, b) => new Date(a.date) - new Date(b.date)).slice(-10);
   socket.emit('news', sortedNewsFeed);
 
+  socket.on('get_news', () => {
+    socket.emit('news', sortedNewsFeed);
+  });
+
   socket.on('new_post', (post) => {
     newsFeed.push(post);
     saveNewsFeed();
