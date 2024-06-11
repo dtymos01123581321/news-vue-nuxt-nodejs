@@ -1,7 +1,7 @@
 # news-vue-nuxt-nodejs
 
 ## Build Setup
-
+![demo.png](demo.png)
 ```bash
 # install dependencies
 $ yarn install
