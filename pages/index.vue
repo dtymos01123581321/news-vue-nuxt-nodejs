@@ -5,9 +5,9 @@
         <v-card class="news-card">
           <v-card-title class="news-title">{{ formatDate(post.date) }}</v-card-title>
           <v-card-text class="news-text">{{ post.text }}</v-card-text>
-          <v-card-actions>
+          <v-card-actions class="news-actions">
+            <span class="news-like">{{ post.likes }}</span>
             <v-btn :disabled="post.liked" @click="likePost(post.id)">Like</v-btn>
-            <span>{{ post.likes }}</span>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -80,10 +80,14 @@ export default {
   color: #333333 !important;
 }
 
-.v-card-actions {
+.news-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end !important;
   align-items: center;
+}
+
+.news-like {
+  margin-right: 20px;
 }
 
 .v-btn {

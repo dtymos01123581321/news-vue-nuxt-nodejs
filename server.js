@@ -10,10 +10,10 @@ const sharedsession = require('express-socket.io-session');
 const app = express();
 
 const sessionMiddleware = session({
-  secret: 'mySecretKey', // Заміни на свій секретний ключ
+  secret: 'mySecretKey', // Secret Key
   resave: false,
   saveUninitialized: true,
-  cookie: { maxAge: 24 * 60 * 60 * 1000 } // 1 день
+  cookie: { maxAge: 24 * 60 * 60 * 1000 } // 1 day
 });
 
 app.use(cors());
@@ -56,7 +56,6 @@ io.on('connection', (socket) => {
     userSession.likedPosts = [];
   }
 
-  // Впевніться, що новини завантажуються при підключенні
   const sortedNewsFeed = newsFeed.sort((a, b) => new Date(a.date) - new Date(b.date)).slice(-10);
   socket.emit('news', sortedNewsFeed);
 
