@@ -6,7 +6,7 @@
           <v-card-title class="news-title">{{ formatDate(post.date) }}</v-card-title>
           <v-card-text class="news-text">{{ post.text }}</v-card-text>
           <v-card-actions>
-            <v-btn class="news-btn" :disabled="post.liked" @click="likePost(post.id)">Like</v-btn>
+            <v-btn :disabled="post.liked" @click="likePost(post.id)">Like</v-btn>
             <span>{{ post.likes }}</span>
           </v-card-actions>
         </v-card>
@@ -37,7 +37,7 @@ export default {
       const post = this.newsFeed.find(p => p.id === postId);
       if (post) {
         post.likes = likes;
-        post.liked = true;
+        post.liked = true; // Маркуємо пост як лайкнутий
       }
     });
 
@@ -51,7 +51,7 @@ export default {
     },
     addPost() {
       console.log('Adding post:', this.newPostText);
-      const newPost = { text: this.newPostText, date: new Date(), id: Date.now(), likes: 0 };
+      const newPost = { text: this.newPostText, date: new Date().toISOString(), id: Date.now(), likes: 0 };
       this.$socket.emit('new_post', newPost);
       this.newPostText = '';
     },
@@ -84,10 +84,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.news-btn {
-  margin-right: 20px !important;
 }
 
 .v-btn {
